@@ -4,7 +4,7 @@
 #include <winuser.h>
 #include "mysql.h"
 int telaInvisivel = 0;
-int registraLog = 1;
+int registraLog = 0;
 void escondeTela(void)
 {
 	HWND stealth;

